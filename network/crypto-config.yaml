@@ -1,0 +1,48 @@
+# 排序节点的组织定义
+OrdererOrgs:
+  - Name: Regulator0 # 名称
+    Domain: regulator0.com # 域名
+    Specs: # 节点域名：orderer.qq.com
+      - Hostname: orderer # 主机名
+
+# peer节点的组织定义
+PeerOrgs:
+  # 食品原产地生产商-组织
+  - Name: Producer # 名称
+    Domain: producer.com # 域名
+    Template: # 使用模板定义。Count 指的是该组织下组织节点的个数
+      Count: 2 # 节点域名：peer0.xxx.com 和 peer1.xxx.com
+    Users: # 组织的用户信息。Count 指该组织中除了 Admin 之外的用户的个数
+      Count: 1 # 用户：Admin 和 User1
+
+  # 冷冻加工制造商节点-组织
+  - Name: Processor
+    Domain: processor.com
+    Template:
+      Count: 2 # 节点域名：peer0.xxx.com 和 peer1.xxx.com
+    Users:
+      Count: 1 # 用户：Admin 和 User1
+
+  # 冷链物流服务商节点-组织
+  - Name: Logtistics
+    Domain: logtistics.com
+    Template:
+      Count: 2 # 节点域名：peer0.xxx.com 和 peer1.xxx.com
+    Users:
+      Count: 1 # 用户：Admin 和 User1
+        
+  # 终端零售商节点-组织
+  - Name: Retailer
+    Domain: retailer.com
+    Template:
+      Count: 2 # 节点域名：peer0.xxx.com 和 peer1.xxx.com
+    Users:
+      Count: 1 # 用户：Admin 和 User1
+
+  # 监管机构-组织
+  - Name: Regulator
+    Domain: regulator.com
+    Template:
+      Count: 2 # 节点域名：peer0.xxx.com 和 peer1.xxx.com
+    Users:
+      Count: 1 # 用户：Admin 和 User1

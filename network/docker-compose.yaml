@@ -1,0 +1,265 @@
+version: '2.1'
+
+volumes:
+  orderer.regulator0.com:
+  peer0.producer.com:
+  peer1.producer.com:
+  peer0.processor.com:
+  peer1.processor.com:
+  peer0.logtistics.com:
+  peer1.logtistics.com:
+  peer0.retailer.com:
+  peer1.retailer.com:
+  peer0.regulator.com:
+  peer1.regulator.com:
+  
+
+networks:
+  fabric_network:
+    name: fabric_network
+
+services:
+  # 排序服务节点
+  orderer.regulator0.com:
+    container_name: orderer.regulator0.com
+    image: hyperledger/fabric-orderer:1.4.12
+    environment:
+      - GODEBUG=netdns=go
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/config/genesis.block # 注入创世区块
+      - ORDERER_GENERAL_LOCALMSPID=Regulator0MSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/orderer/msp # 证书相关
+    command: orderer
+    ports:
+      - "7050:7050"
+    volumes: # 挂载由cryptogen和configtxgen生成的证书文件以及创世区块
+      - ./config/genesis.block:/etc/hyperledger/config/genesis.block
+      - ./crypto-config/ordererOrganizations/regulator0.com/orderers/orderer.regulator0.com/:/etc/hyperledger/orderer
+      - orderer.regulator0.com:/var/hyperledger/production/orderer
+    networks:
+      - fabric_network
+
+  #  Producer 组织 peer0 节点
+  peer0.producer.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: peer-base
+    container_name: peer0.producer.com
+    environment:
+      - CORE_PEER_ID=peer0.producer.com
+      - CORE_PEER_LOCALMSPID=ProducerMSP
+      - CORE_PEER_ADDRESS=peer0.producer.com:7051
+    ports:
+      - "7051:7051" # grpc服务端口
+      - "7053:7053" # eventhub端口
+    volumes:
+      - ./crypto-config/peerOrganizations/producer.com/peers/peer0.producer.com:/etc/hyperledger/peer
+      - peer0.producer.com:/var/hyperledger/production
+    depends_on:
+      - orderer.regulator0.com
+
+  #  Producer 组织 peer1 节点
+  peer1.producer.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: peer-base
+    container_name: peer1.producer.com
+    environment:
+      - CORE_PEER_ID=peer1.producer.com
+      - CORE_PEER_LOCALMSPID=ProducerMSP
+      - CORE_PEER_ADDRESS=peer1.producer.com:7051
+    ports:
+      - "17051:7051"
+      - "17053:7053"
+    volumes:
+      - ./crypto-config/peerOrganizations/producer.com/peers/peer1.producer.com:/etc/hyperledger/peer
+      - peer1.producer.com:/var/hyperledger/production
+    depends_on:
+      - orderer.regulator0.com
+
+  #  Processor 组织 peer0 节点
+  peer0.processor.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: peer-base
+    container_name: peer0.processor.com
+    environment:
+      - CORE_PEER_ID=peer0.processor.com
+      - CORE_PEER_LOCALMSPID=ProcessorMSP
+      - CORE_PEER_ADDRESS=peer0.processor.com:7051
+    ports:
+      - "27051:7051"
+      - "27053:7053"
+    volumes:
+      - ./crypto-config/peerOrganizations/processor.com/peers/peer0.processor.com:/etc/hyperledger/peer
+      - peer0.processor.com:/var/hyperledger/production
+    depends_on:
+      - orderer.regulator0.com
+
+  #  Processor 组织 peer1 节点
+  peer1.processor.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: peer-base
+    container_name: peer1.processor.com
+    environment:
+      - CORE_PEER_ID=peer1.processor.com
+      - CORE_PEER_LOCALMSPID=ProcessorMSP
+      - CORE_PEER_ADDRESS=peer1.processor.com:7051
+    ports:
+      - "37051:7051"
+      - "37053:7053"
+    volumes:
+      - ./crypto-config/peerOrganizations/processor.com/peers/peer1.processor.com:/etc/hyperledger/peer
+      - peer1.processor.com:/var/hyperledger/production
+    depends_on:
+      - orderer.regulator0.com
+
+  #  Logtistics 组织 peer0 节点
+  peer0.logtistics.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: peer-base
+    container_name: peer0.logtistics.com
+    environment:
+      - CORE_PEER_ID=peer0.logtistics.com
+      - CORE_PEER_LOCALMSPID=LogtisticsMSP
+      - CORE_PEER_ADDRESS=peer0.logtistics.com:7051
+    ports:
+      - "47051:7051"
+      - "47053:7053"
+    volumes:
+      - ./crypto-config/peerOrganizations/logtistics.com/peers/peer0.logtistics.com:/etc/hyperledger/peer
+      - peer0.logtistics.com:/var/hyperledger/production
+    depends_on:
+      - orderer.regulator0.com
+
+  #  Logtistics 组织 peer1 节点
+  peer1.logtistics.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: peer-base
+    container_name: peer1.logtistics.com
+    environment:
+      - CORE_PEER_ID=peer1.logtistics.com
+      - CORE_PEER_LOCALMSPID=LogtisticsMSP
+      - CORE_PEER_ADDRESS=peer1.logtistics.com:7051
+    ports:
+      - "57051:7051"
+      - "57053:7053"
+    volumes:
+      - ./crypto-config/peerOrganizations/logtistics.com/peers/peer1.logtistics.com:/etc/hyperledger/peer
+      - peer1.logtistics.com:/var/hyperledger/production
+    depends_on:
+      - orderer.regulator0.com
+
+  #  Retailer 组织 peer0 节点
+  peer0.retailer.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: peer-base
+    container_name: peer0.retailer.com
+    environment:
+      - CORE_PEER_ID=peer0.retailer.com
+      - CORE_PEER_LOCALMSPID=RetailerMSP
+      - CORE_PEER_ADDRESS=peer0.retailer.com:7051
+    ports:
+      - "7055:7051"
+      - "7057:7053"
+    volumes:
+      - ./crypto-config/peerOrganizations/retailer.com/peers/peer0.retailer.com:/etc/hyperledger/peer
+      - peer0.retailer.com:/var/hyperledger/production
+    depends_on:
+      - orderer.regulator0.com
+
+  #  Retailer 组织 peer1 节点
+  peer1.retailer.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: peer-base
+    container_name: peer1.retailer.com
+    environment:
+      - CORE_PEER_ID=peer1.retailer.com
+      - CORE_PEER_LOCALMSPID=RetailerMSP
+      - CORE_PEER_ADDRESS=peer1.retailer.com:7051
+    ports:
+      - "17055:7051"
+      - "17057:7053"
+    volumes:
+      - ./crypto-config/peerOrganizations/retailer.com/peers/peer1.retailer.com:/etc/hyperledger/peer
+      - peer1.retailer.com:/var/hyperledger/production
+    depends_on:
+      - orderer.regulator0.com
+
+  #  Regulator 组织 peer0 节点
+  peer0.regulator.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: peer-base
+    container_name: peer0.regulator.com
+    environment:
+      - CORE_PEER_ID=peer0.regulator.com
+      - CORE_PEER_LOCALMSPID=RegulatorMSP
+      - CORE_PEER_ADDRESS=peer0.regulator.com:7051
+    ports:
+      - "27055:7051"
+      - "27057:7053"
+    volumes:
+      - ./crypto-config/peerOrganizations/regulator.com/peers/peer0.regulator.com:/etc/hyperledger/peer
+      - peer0.regulator.com:/var/hyperledger/production
+    depends_on:
+      - orderer.regulator0.com
+
+  #  Regulator 组织 peer1 节点
+  peer1.regulator.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: peer-base
+    container_name: peer1.regulator.com
+    environment:
+      - CORE_PEER_ID=peer1.regulator.com
+      - CORE_PEER_LOCALMSPID=RegulatorMSP
+      - CORE_PEER_ADDRESS=peer1.regulator.com:7051
+    ports:
+      - "37055:7051"
+      - "37057:7053"
+    volumes:
+      - ./crypto-config/peerOrganizations/regulator.com/peers/peer1.regulator.com:/etc/hyperledger/peer
+      - peer1.regulator.com:/var/hyperledger/production
+    depends_on:
+      - orderer.regulator0.com
+
+  # 客户端节点
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:1.4.12
+    tty: true
+    environment:
+      # go 环境设置
+      - GO111MODULE=auto
+      - GOPROXY=https://goproxy.cn
+      - CORE_PEER_ID=cli
+    command: /bin/bash
+    volumes:
+      - ./config:/etc/hyperledger/config
+      - ./crypto-config/peerOrganizations/producer.com/:/etc/hyperledger/peer/producer.com
+      - ./crypto-config/peerOrganizations/processor.com/:/etc/hyperledger/peer/processor.com
+      - ./crypto-config/peerOrganizations/logtistics.com/:/etc/hyperledger/peer/logtistics.com
+      - ./crypto-config/peerOrganizations/retailer.com/:/etc/hyperledger/peer/retailer.com
+      - ./crypto-config/peerOrganizations/regulator.com/:/etc/hyperledger/peer/regulator.com
+      - ./../chaincode:/opt/gopath/src/chaincode # 链码路径注入
+    networks:
+      - fabric_network
+    depends_on:
+      - orderer.regulator0.com
+      - peer0.producer.com
+      - peer1.producer.com
+      - peer0.processor.com
+      - peer1.processor.com
+      - peer0.logtistics.com
+      - peer1.logtistics.com
+      - peer0.retailer.com
+      - peer1.retailer.com
+      - peer0.regulator.com
+      - peer1.regulator.com
