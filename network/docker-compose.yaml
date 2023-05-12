@@ -248,7 +248,7 @@ services:
       - ./crypto-config/peerOrganizations/logtistics.com/:/etc/hyperledger/peer/logtistics.com
       - ./crypto-config/peerOrganizations/retailer.com/:/etc/hyperledger/peer/retailer.com
       - ./crypto-config/peerOrganizations/regulator.com/:/etc/hyperledger/peer/regulator.com
-      - ./../chaincode:/opt/gopath/src/chaincode # 链码路径注入
+      - ./../chaincode:/opt/gopath/src/github.com/Lingxing-GT/fabric-coldtrain/chaincode # 链码路径注入
     networks:
       - fabric_network
     depends_on:

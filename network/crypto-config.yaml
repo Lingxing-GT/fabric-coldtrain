@@ -2,7 +2,7 @@
 OrdererOrgs:
   - Name: Regulator0 # 名称
     Domain: regulator0.com # 域名
-    Specs: # 节点域名：orderer.qq.com
+    Specs: # 节点域名：orderer.regulator0.com
       - Hostname: orderer # 主机名
 
 # peer节点的组织定义

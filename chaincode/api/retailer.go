@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Lingxing-GT/fabric-coldtrain/model"
-	"github.com/Lingxing-GT/fabric-coldtrain/pkg/utils"
+	"github.com/Lingxing-GT/fabric-coldtrain/chaincode/model"
+	"github.com/Lingxing-GT/fabric-coldtrain/chaincode/pkg/utils"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 )

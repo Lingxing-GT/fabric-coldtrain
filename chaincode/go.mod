@@ -1,4 +1,4 @@
-module github.com/Lingxing-GT/fabric-coldtrain
+module github.com/Lingxing-GT/fabric-coldtrain/chaincode
 
 go 1.17
 
