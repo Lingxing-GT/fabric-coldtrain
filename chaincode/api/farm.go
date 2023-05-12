@@ -82,7 +82,7 @@ func AddCattle(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		DayOut:    "NONE",
 		Remarks:   remarks,
 	}
-	if err := utils.WriteLedger(cattle, stub, model.Cattlekey, []string{cattleID, farmID}); err != nil {
+	if err := utils.WriteLedger(cattle, stub, model.Cattlekey, []string{cattleID}); err != nil {
 		return shim.Error(fmt.Sprintf("%s", err))
 	}
 	return shim.Success(nil)
@@ -99,8 +99,9 @@ func DeleteCattle(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	remarks := args[1]
 
 	//Find the cattle by cattleID
-	resultsCattle, err := utils.GetStateByPartialCompositeKeys2(stub, model.Cattlekey, []string{cattleID})
+	resultsCattle, err := utils.GetStateByPartialCompositeKeys(stub, model.Cattlekey, []string{cattleID})
 	if err != nil || len(resultsCattle) != 1 {
+		fmt.Println(len(resultsCattle))
 		return shim.Error(fmt.Sprintf("Error finding cattle %s: %s", cattleID, err))
 	}
 	var realCattle model.Cattle

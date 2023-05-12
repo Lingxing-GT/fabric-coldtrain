@@ -35,12 +35,12 @@ func AddTruck(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 //three args:ID,owner,name,age
 func AddDriver(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 4 {
-		return shim.Error("The number of args is unqualified! It should be 5.")
+		return shim.Error("The number of args is unqualified! It should be 4.")
 	}
 	driverID := args[0]
 	owner := args[1]
 	name := args[2]
-	age, err := strconv.Atoi(args[4])
+	age, err := strconv.Atoi(args[3])
 	if err != nil {
 		return shim.Error("The age is illegal!")
 	}

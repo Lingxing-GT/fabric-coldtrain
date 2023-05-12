@@ -17,7 +17,7 @@ configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./config/genesis.block -
 echo "五、生成通道配置事务'appchannel.tx'"
 configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./config/appchannel.tx -channelID appchannel
 
-echo "五、为各组织定义锚节点"
+echo "六、为各组织定义锚节点"
 configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./config/ProducerAnchor.tx -channelID appchannel -asOrg Producer
 configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./config/ProcessorAnchor.tx -channelID appchannel -asOrg Processor
 configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./config/LogtisticsAnchor.tx -channelID appchannel -asOrg Logtistics
@@ -71,11 +71,11 @@ docker exec cli bash -c "$RegulatorPeer0Cli peer channel update -o orderer.regul
 # -v 版本号
 # -p 链码目录，在 /opt/gopath/src/ 目录下
 echo "十、安装链码"
-docker exec cli bash -c "$ProducerPeer0Cli peer chaincode install -n fabric-coldtrain -v 1.0.0 -l golang -p github.com/Lingxing-GT/fabric-coldtrain/chaincode"
-docker exec cli bash -c "$ProcessorPeer0Cli peer chaincode install -n fabric-coldtrain -v 1.0.0 -l golang -p github.com/Lingxing-GT/fabric-coldtrain/chaincode"
-docker exec cli bash -c "$LogtisticsPeer0Cli peer chaincode install -n fabric-coldtrain -v 1.0.0 -l golang -p github.com/Lingxing-GT/fabric-coldtrain/chaincode"
-docker exec cli bash -c "$RetailerPeer0Cli peer chaincode install -n fabric-coldtrain -v 1.0.0 -l golang -p github.com/Lingxing-GT/fabric-coldtrain/chaincode"
-docker exec cli bash -c "$RegulatorPeer0Cli peer chaincode install -n fabric-coldtrain -v 1.0.0 -l golang -p github.com/Lingxing-GT/fabric-coldtrain/chaincode"
+docker exec cli bash -c "$ProducerPeer0Cli peer chaincode install -n test4 -v 1.0.0 -l golang -p github.com/Lingxing-GT/fabric-coldtrain/chaincode"
+docker exec cli bash -c "$ProcessorPeer0Cli peer chaincode install -n test4 -v 1.0.0 -l golang -p github.com/Lingxing-GT/fabric-coldtrain/chaincode"
+docker exec cli bash -c "$LogtisticsPeer0Cli peer chaincode install -n test4 -v 1.0.0 -l golang -p github.com/Lingxing-GT/fabric-coldtrain/chaincode"
+docker exec cli bash -c "$RetailerPeer0Cli peer chaincode install -n test4 -v 1.0.0 -l golang -p github.com/Lingxing-GT/fabric-coldtrain/chaincode"
+docker exec cli bash -c "$RegulatorPeer0Cli peer chaincode install -n test4 -v 1.0.0 -l golang -p github.com/Lingxing-GT/fabric-coldtrain/chaincode"
 
 # 只需要其中一个节点实例化
 # -n 对应上一步安装链码的名字
@@ -83,8 +83,22 @@ docker exec cli bash -c "$RegulatorPeer0Cli peer chaincode install -n fabric-col
 # -C 是通道，在fabric的世界，一个通道就是一条不同的链
 # -c 为传参，传入init参数
 echo "十一、实例化链码"
-docker exec cli bash -c "$ProducerPeer0Cli peer chaincode instantiate -o orderer.regulator0.com:7050 -C appchannel -n fabric-coldtrain -l golang -v 1.0.0 -c '{\"Args\":[\"init\"]}' -P \"AND ('ProducerMSP.member','ProcessorMSP.member','LogtisticsMSP.member','RetailerMSP.member','RegulatorMSP.member')\""
+docker exec cli bash -c "$ProducerPeer0Cli peer chaincode instantiate -o orderer.regulator0.com:7050 -C appchannel -n test4 -l golang -v 1.0.0 -c '{\"Args\":[\"init\"]}' -P \"AND ('ProducerMSP.member','ProcessorMSP.member','LogtisticsMSP.member','RetailerMSP.member','RegulatorMSP.member')\""
 
 echo "正在等待链码实例化完成，等待5秒"
 sleep 5
+
+# 进行链码交互，验证链码是否正确安装及区块链网络能否正常工作
+echo "十二、验证链码"
+docker exec cli bash -c "$ProducerPeer0Cli peer chaincode invoke -C appchannel -n test4 -c '{\"Args\":[\"hello\"]}'"
+docker exec cli bash -c "$ProducerPeer0Cli peer chaincode invoke -C appchannel -n test4 -c '{\"Args\":[\"addCattle\",\"FM1C1\",\"FM001\",\"FM1B1\"]}'"
+docker exec cli bash -c "$ProducerPeer0Cli peer chaincode invoke -C appchannel -n test4 -c '{\"Args\":[\"deleteCattle\",\"FM1C1\",\"CSS\"]}'"
+docker exec cli bash -c "$ProducerPeer0Cli peer chaincode invoke -C appchannel -n test4 -c '{\"Args\":[\"addBeff\",\"BF001\",\"FM1C1\",\"1\",\"10.5\"]}'"
+docker exec cli bash -c "$ProcessorPeer0Cli peer chaincode invoke -C appchannel -n test4 -c '{\"Args\":[\"frozenProcess\",\"BF001\",\"FT1OP1\",\"FT001\",\"12.0\"]}'"
+docker exec cli bash -c "$LogtisticsPeer0Cli peer chaincode invoke -C appchannel -n test4 -c '{\"Args\":[\"createWaybill\",\"SF001\",\"陕A4B103\",\"ChangAn, XiAn\",\"BF001\"]}'"
+docker exec cli bash -c "$LogtisticsPeer0Cli peer chaincode invoke -C appchannel -n test4 -c '{\"Args\":[\"addWaybillInfo\",\"SF001\",\"Chencang, Baoji\",\"-18.7\",\"1\"]}'"
+docker exec cli bash -c "$RetailerPeer0Cli peer chaincode invoke -C appchannel -n test4 -c '{\"Args\":[\"addRetailBeff\",\"BF001\",\"MK001\",\"SF001\",\"600\"]}'"
+docker exec cli bash -c "$RetailerPeer0Cli peer chaincode invoke -C appchannel -n test4 -c '{\"Args\":[\"addRetailBeff\",\"BF001\",\"MK001\",\"SF001\",\"600\"]}'"
+docker exec cli bash -c "$RetailerPeer0Cli peer chaincode invoke -C appchannel -n test4 -c '{\"Args\":[\"addSaleBill\",\"BF001\",\"MB001\"]}'"
+docker exec cli bash -c "$RegualatorPeer0Cli peer chaincode invoke -C appchannel -n test4 -c '{\"Args\":[\"queryByBeffID\",\"BF001\"]}'"
 

@@ -18,7 +18,8 @@ func main() {
 		panic(err)
 	}
 	time.Local = timeLocal
-	fmt.Println("这里执行到了吗？？")
+	dt := time.Now()
+	fmt.Println(dt)
 	err = shim.Start(new(SmartContract))
 	if err != nil {
 		fmt.Printf("Error starting SmartContract: %s", err)
@@ -30,10 +31,7 @@ func (t *SmartContract) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("*****SmartContract Init*****")
 	// 初始化默认数据
 	// 初始化养殖场
-	fmt.Println("问题在这？？")
 	var FarmOwner = "producer.com"
-	fmt.Println("问题在哪？？")
-	time.Sleep(10 * time.Second)
 	var FarmIDs = [5]string{"FM001", "FM002", "FM003", "FM004", "FM005"}
 	var Addrs = [5]string{"Changan, XiAn", "Donghu, Nanchang", "Zhanggong, Ganzhou", "Rongxian, Yulin", "Shunde, Foshan"}
 	for i, val := range FarmIDs {
@@ -104,6 +102,8 @@ func (t *SmartContract) Init(stub shim.ChaincodeStubInterface) pb.Response {
 func (t *SmartContract) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	funcName, args := stub.GetFunctionAndParameters()
 	switch funcName {
+	case "hello":
+		return api.Hello(stub, args)
 	case "addFarm":
 		return api.AddFarm(stub, args)
 	case "addBreeder":
