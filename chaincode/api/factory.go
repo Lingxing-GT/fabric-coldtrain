@@ -59,8 +59,8 @@ func AddOperator(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 //to process and frozen the beff, the order of args is (BeffID, OperatorID, FactoryID, Weight)
 func FrozenProcess(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 5 {
-		return shim.Error("The number of args is unqualified! It should be 5.")
+	if len(args) != 4 {
+		return shim.Error("The number of args is unqualified! It should be 4.")
 	}
 	beffID := args[0]
 	operatorID := args[1]

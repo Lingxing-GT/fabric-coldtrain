@@ -30,6 +30,22 @@ services:
       - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/config/genesis.block # 注入创世区块
       - ORDERER_GENERAL_LOCALMSPID=Regulator0MSP
       - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/orderer/msp # 证书相关
+      #enable TLS
+      #- ORDERER_GENERAL_TLS_ENABLED=true
+      #- ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/orderer/tls/server.key
+      #- ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/orderer/tls/server.crt
+      #- ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/orderer/tls/ca.crt]
+      #- ORDERER_KAFKA_TOPIC_REPLICATIONFACTOR=1
+      #- ORDERER_KAFKA_VERBOSE=true
+      #- ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/etc/hyperledger/orderer/tls/server.crt
+      #- ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/etc/hyperledger/orderer/tls/server.key
+      #- ORDERER_GENERAL_CLUSTER_ROOTCAS=[/etc/hyperledger/orderer/tls/ca.crt]
+      #- ORDERER_CHANNELPARTICIPATION_ENABLED=true
+      #- ORDERER_ADMIN_TLS_ENABLED=true
+      #- ORDERER_ADMIN_TLS_CERTIFICATE=/etc/hyperledger/orderer/tls/server.crt
+      #- ORDERER_ADMIN_TLS_PRIVATEKEY=/etc/hyperledger/orderer/tls/server.key
+      #- ORDERER_ADMIN_TLS_ROOTCAS=[/etc/hyperledger/orderer/tls/ca.crt]
+      #- ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/etc/hyperledger/orderer/tls/ca.crt]
     command: orderer
     ports:
       - "7050:7050"
@@ -240,6 +256,8 @@ services:
       - GO111MODULE=auto
       - GOPROXY=https://goproxy.cn
       - CORE_PEER_ID=cli
+      #TLS
+      #- CORE_PEER_TLS_ENABLED=true
     command: /bin/bash
     volumes:
       - ./config:/etc/hyperledger/config
@@ -248,6 +266,8 @@ services:
       - ./crypto-config/peerOrganizations/logtistics.com/:/etc/hyperledger/peer/logtistics.com
       - ./crypto-config/peerOrganizations/retailer.com/:/etc/hyperledger/peer/retailer.com
       - ./crypto-config/peerOrganizations/regulator.com/:/etc/hyperledger/peer/regulator.com
+      #TLS
+      #- ./crypto-config/ordererOrganizations/regulator0.com/:/etc/hyperledger/orderer/regulator0.com
       - ./../chaincode:/opt/gopath/src/github.com/Lingxing-GT/fabric-coldtrain/chaincode # 链码路径注入
     networks:
       - fabric_network

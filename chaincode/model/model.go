@@ -22,12 +22,12 @@ type Cattle struct {
 
 //肉牛成长记录
 type CattleGrowInfo struct {
-	CattleID   string  `json:"CattleID"`
-	RecordTime string  `json:"RecordTime"`
-	TEMP       float64 `json:"Temperature"`
-	Health     string  `json:"Health"` //3 Rank: Good, Ill, Emergency
-	Weight     float64 `json:"Weight"`
-	Remarks    string  `json:"Remarks"`
+	CattleID   string    `json:"CattleID"`
+	RecordTime []string  `json:"RecordTime"`
+	TEMP       []float64 `json:"Temperature"`
+	Health     []string  `json:"Health"` //3 Rank: Good, Ill, Emergency
+	Weight     []float64 `json:"Weight"`
+	Remarks    []string  `json:"Remarks"`
 }
 
 //牛肉信息（销售单位）

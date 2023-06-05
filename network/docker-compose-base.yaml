@@ -11,6 +11,11 @@ services:
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/msp # msp证书（节点证书）
       - CORE_LEDGER_STATE_STATEDATABASE=goleveldb # 状态数据库的存储引擎（or CouchDB）
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric_network # docker 网络
+      #- CORE_PEER_TLS_ENABLED=true #TLS相关
+      #- CORE_PEER_PROFILE_ENABLED=true
+      #- CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peer/tls/server.crt
+      #- CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peer/tls/server.key
+      #- CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peer/tls/ca.crt
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric

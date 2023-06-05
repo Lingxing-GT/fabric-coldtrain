@@ -11,6 +11,7 @@ import (
 // WriteLedger 写入账本
 func WriteLedger(obj interface{}, stub shim.ChaincodeStubInterface, objectType string, keys []string) error {
 	//创建复合主键
+	fmt.Println("准备写入", objectType)
 	var key string
 	if val, err := stub.CreateCompositeKey(objectType, keys); err != nil {
 		return errors.New(fmt.Sprintf("%s-创建复合主键出错 %s", objectType, err))
@@ -21,6 +22,7 @@ func WriteLedger(obj interface{}, stub shim.ChaincodeStubInterface, objectType s
 	if err != nil {
 		return errors.New(fmt.Sprintf("%s-序列化json数据失败出错: %s", objectType, err))
 	}
+	fmt.Println(key, bytes)
 	//写入区块链账本
 	if err := stub.PutState(key, bytes); err != nil {
 		return errors.New(fmt.Sprintf("%s-写入区块链账本出错: %s", objectType, err))
@@ -75,6 +77,7 @@ func GetStateByPartialCompositeKeys(stub shim.ChaincodeStubInterface, objectType
 			}
 			// 从账本中获取数据
 			bytes, err := stub.GetState(key)
+			fmt.Println("key=", key, "bytes=", bytes, "err=", err)
 			if err != nil {
 				return nil, errors.New(fmt.Sprintf("%s-获取数据出错: %s", objectType, err))
 			}
@@ -104,6 +107,7 @@ func GetStateByPartialCompositeKeys2(stub shim.ChaincodeStubInterface, objectTyp
 			return nil, errors.New(fmt.Sprintf("%s-返回的数据出错: %s", objectType, err))
 		}
 
+		fmt.Println("key=", keys, "bytes=", val.GetValue(), "err=", err)
 		results = append(results, val.GetValue())
 	}
 	return results, nil

@@ -85,7 +85,12 @@ func AddCattle(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if err := utils.WriteLedger(cattle, stub, model.Cattlekey, []string{cattleID}); err != nil {
 		return shim.Error(fmt.Sprintf("%s", err))
 	}
-	return shim.Success(nil)
+
+	cattleBytes, err := json.Marshal(cattle)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("序列化成功创建的信息出错: %s", err))
+	}
+	return shim.Success(cattleBytes)
 }
 
 //delete cattle， the order of args is (CattleID, DayOut, Remarks)
@@ -99,9 +104,9 @@ func DeleteCattle(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	remarks := args[1]
 
 	//Find the cattle by cattleID
-	resultsCattle, err := utils.GetStateByPartialCompositeKeys(stub, model.Cattlekey, []string{cattleID})
+	resultsCattle, err := utils.GetStateByPartialCompositeKeys2(stub, model.Cattlekey, []string{cattleID})
+	fmt.Println("DeleteCattle, resultsCattle =", resultsCattle)
 	if err != nil || len(resultsCattle) != 1 {
-		fmt.Println(len(resultsCattle))
 		return shim.Error(fmt.Sprintf("Error finding cattle %s: %s", cattleID, err))
 	}
 	var realCattle model.Cattle
@@ -129,26 +134,36 @@ func AddCattleGrowInfo(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 	}
 	cattleID := args[0]
 	createTime, _ := stub.GetTxTimestamp()
+	var recordTimes []string
+	var temps []float64
+	var healths []string
+	var remarks []string
+	var weights []float64
 	recordTime := time.Unix(int64(createTime.GetSeconds()), int64(createTime.GetNanos())).Local().Format("2006-01-02 15:04:05")
 	temp, err := strconv.ParseFloat(args[1], 64)
+	recordTimes = append(recordTimes, recordTime)
+	temps = append(temps, temp)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("the temperature is illegal: %s", err))
 	}
 	health := args[2]
+	healths = append(healths, health)
 	weight, err := strconv.ParseFloat(args[3], 64)
+	weights = append(weights, weight)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("the weight is illegal: %s", err))
 	}
-	remarks := "NONE"
+	remark := "NONE"
 	if len(args) == 5 {
-		remarks = args[4]
+		remark = args[4]
 	}
+	remarks = append(remarks, remark)
 	cattleGrowInfo := &model.CattleGrowInfo{
 		CattleID:   cattleID,
-		RecordTime: recordTime,
-		TEMP:       temp,
-		Health:     health,
-		Weight:     weight,
+		RecordTime: recordTimes,
+		TEMP:       temps,
+		Health:     healths,
+		Weight:     weights,
 		Remarks:    remarks,
 	}
 	if err := utils.WriteLedger(cattleGrowInfo, stub, model.CattleGrowkey, []string{cattleID}); err != nil {
@@ -188,4 +203,18 @@ func AddBeff(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	}
 
 	return shim.Success(nil)
+}
+
+//to query cattle grow info by cattleID
+func QueryByCattleID(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) < 1 {
+		shim.Error("please enter a CattleID")
+	}
+	cattleID := args[0]
+	//Find the waybill by number
+	resultGrowInfo, err := utils.GetStateByPartialCompositeKeys2(stub, model.CattleGrowkey, []string{cattleID})
+	if err != nil || len(resultGrowInfo) != 1 {
+		return shim.Error(fmt.Sprintf("Error finding CattleGrowInfo %s: %s", cattleID, err))
+	}
+	return shim.Success(resultGrowInfo[0])
 }

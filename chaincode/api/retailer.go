@@ -84,8 +84,8 @@ func AddRetailBeff(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 
 //to add a sale bill, the order of args is "BeffID, BillID"
 func AddSaleBill(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 3 {
-		return shim.Error("The number of args is unqualified! It should be 3.")
+	if len(args) != 2 {
+		return shim.Error("The number of args is unqualified! It should be 2.")
 	}
 	beffID := args[0]
 	billNo := args[1]

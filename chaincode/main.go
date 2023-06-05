@@ -82,6 +82,7 @@ func (t *SmartContract) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	var DNames = [3]string{"XiaoKa", "XiaoYe", "XiaoZhang"}
 	var DAge = [3]string{"44", "39", "35"}
 	for i, val := range DriverIDs {
+		fmt.Println(i)
 		var args = []string{val, DNames[i], DAge[i], TruckOwner}
 		api.AddDriver(stub, args)
 	}
@@ -112,6 +113,8 @@ func (t *SmartContract) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return api.AddFactory(stub, args)
 	case "addCattle":
 		return api.AddCattle(stub, args)
+	case "addBeff":
+		return api.AddBeff(stub, args)
 	case "addCattleGrowInfo":
 		return api.AddCattleGrowInfo(stub, args)
 	case "deleteCattle":
@@ -134,6 +137,10 @@ func (t *SmartContract) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return api.AddRetailBeff(stub, args)
 	case "queryByBeffID":
 		return api.QueryByBeffID(stub, args)
+	case "queryByWaybillNo":
+		return api.QueryByWaybillNo(stub, args)
+	case "queryByCattleID":
+		return api.QueryByCattleID(stub, args)
 	/*case "queryByFarmID":
 		return api.QueryByFarmID(stub, args)
 	case "queryByCattleID":

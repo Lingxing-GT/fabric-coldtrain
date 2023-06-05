@@ -50,6 +50,7 @@ func AddDriver(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		Name:  name,
 		Age:   age,
 	}
+	fmt.Println("驾驶员添加")
 	if err := utils.WriteLedger(driver, stub, model.Driverkey, []string{driverID, owner}); err != nil {
 		return shim.Error(fmt.Sprintf("%s", err))
 	}
@@ -136,4 +137,18 @@ func AddWaybillInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response
 	}
 
 	return shim.Success(nil)
+}
+
+//to query waybill info by waybillNo.
+func QueryByWaybillNo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) < 1 {
+		shim.Error("please enter a WaybillNumber")
+	}
+	waybillNo := args[0]
+	//Find the waybill by number
+	resultBill, err := utils.GetStateByPartialCompositeKeys2(stub, model.Waybillkey, []string{waybillNo})
+	if err != nil || len(resultBill) != 1 {
+		return shim.Error(fmt.Sprintf("Error finding waybill %s: %s", waybillNo, err))
+	}
+	return shim.Success(resultBill[0])
 }

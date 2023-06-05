@@ -48,9 +48,15 @@ Organizations:
 # 定义了排序服务的相关参数，这些参数将用于创建创世区块
 Orderer: &OrdererDefaults
   # 排序节点类型用来指定要启用的排序节点实现，不同的实现对应不同的共识算法
-  OrdererType: solo # 共识机制
+  OrdererType: solo #etcdraft # 共识机制
   Addresses: # Orderer 的域名（用于连接）
     - orderer.regulator0.com:7050
+  #EtcdRaft:
+    #Consenters:
+    #- Host: orderer.regulator0.com
+    #  Port: 7050
+    #  ClientTLSCert: crypto-config/ordererOrganizations/regulator0.com/orderers/orderer.regulator0.com/tls/server.crt
+    #  ServerTLSCert: crypto-config/ordererOrganizations/regulator0.com/orderers/orderer.regulator0.com/tls/server.crt
   BatchTimeout: 2s # 出块时间间隔
   BatchSize: # 用于控制每个block的信息量
     MaxMessageCount: 10 #每个区块的消息个数
